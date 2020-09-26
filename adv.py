@@ -48,7 +48,7 @@ def get_path(visited):
 
         for d in graph[current_id]:
             if graph[current_id][d] == "?":
-                return [current_path, directions]
+                return directions
 
         for d in graph[current_id]:
             if graph[current_id][d] not in visited:
@@ -86,7 +86,7 @@ def generate_traversal_path():
             res = get_path(visited)
 
             if res:
-                traversal_path.extend(res[1])
+                traversal_path.extend(res)
             else:
                 break
 
