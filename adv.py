@@ -14,8 +14,8 @@ world = World()
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
-map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+# map_file = "maps/test_loop_fork.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph = literal_eval(open(map_file, "r").read())
@@ -26,6 +26,11 @@ world.print_rooms()
 
 player = Player(world.starting_room)
 
+# Fill this out with directions to walk
+# traversal_path = ['n', 'n']
+traversal_path = []
+graph = {player.current_room.id: {d: "?" for d in player.current_room.get_exits()}}
+
 
 def get_unexplored_direction(directions):
     for d in directions:
@@ -33,24 +38,9 @@ def get_unexplored_direction(directions):
             return d
 
 
-def setup_starting_graph():
-    graph = {0: {}}
-
-    for d in player.current_room.get_exits():
-        graph[0][d] = "?"
-    return graph
-
-
-# Fill this out with directions to walk
-# traversal_path = ['n', 'n']
-traversal_path = []
-graph = setup_starting_graph()
-
-
 def get_path(visited):
-    queue = deque()
+    queue, directions = deque(), []
     queue.append([player.current_room.id])
-    directions = []
 
     while len(queue):
         current_path = queue.popleft()
@@ -69,16 +59,15 @@ def get_path(visited):
                 directions.append(d)
                 player.travel(d)
                 break
-    return directions if len(directions) else [[], []]
 
 
 opposite_directions = {"n": "s", "s": "n", "e": "w", "w": "e"}
 
 
 def generate_traversal_path():
-    visited, visited_rooms = set(), 1
+    visited, num_rooms = set(), 1
 
-    while visited_rooms < len(world.rooms):
+    while num_rooms < len(world.rooms):
         room_id = player.current_room.id
         random_d = get_unexplored_direction(graph[room_id])
 
@@ -88,16 +77,16 @@ def generate_traversal_path():
             graph[room_id][random_d] = player.current_room.id
 
             if player.current_room.id not in graph:
-                visited_rooms += 1
+                num_rooms += 1
                 graph[player.current_room.id] = {
                     d: "?" for d in player.current_room.get_exits()
                 }
             graph[player.current_room.id][opposite_directions[random_d]] = room_id
         else:
-            [path, directions] = get_path(visited)
+            res = get_path(visited)
 
-            if len(path):
-                traversal_path.extend(directions)
+            if res:
+                traversal_path.extend(res[1])
             else:
                 break
 
