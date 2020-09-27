@@ -27,9 +27,9 @@ world.print_rooms()
 player = Player(world.starting_room)
 
 # Fill this out with directions to walk
-# traversal_path = ['n', 'n']
 traversal_path = []
 graph = {player.current_room.id: {d: "?" for d in player.current_room.get_exits()}}
+came_from = {"n": "s", "s": "n", "e": "w", "w": "e"}
 
 
 def get_unexplored_direction(directions):
@@ -38,7 +38,7 @@ def get_unexplored_direction(directions):
             return d
 
 
-def get_path(visited):
+def get_directions(visited):
     queue, directions = deque(), []
     queue.append([player.current_room.id])
 
@@ -61,9 +61,6 @@ def get_path(visited):
                 break
 
 
-opposite_directions = {"n": "s", "s": "n", "e": "w", "w": "e"}
-
-
 def generate_traversal_path():
     visited, num_rooms = set(), 1
 
@@ -81,12 +78,12 @@ def generate_traversal_path():
                 graph[player.current_room.id] = {
                     d: "?" for d in player.current_room.get_exits()
                 }
-            graph[player.current_room.id][opposite_directions[random_d]] = room_id
+            graph[player.current_room.id][came_from[random_d]] = room_id
         else:
-            res = get_path(visited)
+            directions = get_directions(visited)
 
-            if res:
-                traversal_path.extend(res)
+            if directions:
+                traversal_path.extend(directions)
             else:
                 break
 
