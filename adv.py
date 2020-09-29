@@ -11,10 +11,10 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
-map_file = "maps/test_cross.txt"
-map_file = "maps/test_loop.txt"
-map_file = "maps/test_loop_fork.txt"
+# map_file = "maps/test_line.txt"
+# map_file = "maps/test_cross.txt"
+# map_file = "maps/test_loop.txt"
+# map_file = "maps/test_loop_fork.txt"
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
@@ -28,6 +28,66 @@ player = Player(world.starting_room)
 
 
 came_from = {"n": "s", "s": "n", "e": "w", "w": "e"}
+
+# traversal_path = []
+# graph = {player.current_room.id: {d: "?" for d in player.current_room.get_exits()}}
+
+
+# def get_unexplored_direction(directions):
+#     for d in directions:
+#         if directions[d] == "?":
+#             return d
+
+
+# def get_directions(visited):
+#     queue, directions = deque(), []
+#     queue.append([player.current_room.id])
+
+#     while len(queue):
+#         current_path = queue.popleft()
+#         current_id = current_path[-1]
+
+#         if "?" in graph[current_id].values():
+#             return directions
+
+#         for d in graph[current_id]:
+#             if graph[current_id][d] not in visited:
+#                 visited.add(player.current_room.id)
+#                 new_path = list(current_path)
+#                 new_path.append(graph[current_id][d])
+#                 queue.append(new_path)
+#                 directions.append(d)
+#                 player.travel(d)
+#                 break
+
+
+# def generate_traversal_path():
+#     visited, num_rooms = set(), 1
+
+#     while num_rooms < len(world.rooms):
+#         room_id = player.current_room.id
+#         random_d = get_unexplored_direction(graph[room_id])
+
+#         if random_d:
+#             traversal_path.append(random_d)
+#             player.travel(random_d)
+#             graph[room_id][random_d] = player.current_room.id
+
+#             if player.current_room.id not in graph:
+#                 num_rooms += 1
+#                 graph[player.current_room.id] = {
+#                     d: "?" for d in player.current_room.get_exits()
+#                 }
+#                 graph[player.current_room.id][came_from[random_d]] = room_id
+#         else:
+#             directions = get_directions(visited)
+#             if directions:
+#                 traversal_path.extend(directions)
+#             else:
+#                 return
+
+
+# generate_traversal_path()
 
 
 def generate_traversal_path(current_room, directions=None, visited=None):
@@ -49,7 +109,7 @@ def generate_traversal_path(current_room, directions=None, visited=None):
             visited.add(player.current_room.id)
             # adding this move to 'directions'
             directions.append(move)
-            # recursive: repeating loop and adding to directions
+            # recursive: repeating looping
             generate_traversal_path(player.current_room, directions, visited)
             # go_back to previous room
             player.travel(came_from[move])
